@@ -1,6 +1,2 @@
-cgmanager/
-deps/
-lxc/
-lxcfs/
-lxd/
+bin/*
 *.snap

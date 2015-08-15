@@ -1,0 +1,29 @@
+#!/bin/sh -eu
+export LD_LIBRARY_PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:${SNAP_APP_PATH}/bin/$(uname -m)/lxc/:${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager
+export PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:$PATH
+export LXD_DIR=${SNAP_APP_DATA_PATH}/lxd
+export LXC_TEMPLATE_CONFIG=${SNAP_APP_PATH}/bin/$(uname -m)/lxc/config/
+
+# Start networking
+${SNAP_APP_PATH}/wrappers/lxc-net start
+
+# Start CGManager
+if ! ${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager/cgproxy --check-master; then
+    mount -o remount,rw /sys/fs/cgroup
+    ${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager/cgmanager -m name=systemd &
+    echo $! > ${SNAP_APP_DATA_PATH}/cgmanager.pid
+fi
+
+# Start lxcfs
+mkdir -p ${SNAP_APP_DATA_PATH}/lxcfs
+${SNAP_APP_PATH}/bin/$(uname -m)/lxcfs/lxcfs ${SNAP_APP_DATA_PATH}/lxcfs &
+echo $! > ${SNAP_APP_DATA_PATH}/lxcfs.pid
+
+# Start lxd
+mkdir -p ${SNAP_APP_DATA_PATH}/lxc
+mkdir -p ${SNAP_APP_DATA_PATH}/lxd
+${SNAP_APP_PATH}/bin/$(uname -m)/lxd/lxd --group sudo &
+PID=$!
+echo $PID > ${SNAP_APP_DATA_PATH}/lxd.pid
+
+wait $PID

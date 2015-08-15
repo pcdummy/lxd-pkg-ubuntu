@@ -1,8 +1,8 @@
 #!/bin/sh -
 
-distrosysconfdir="/var/lib/apps/lxd-0.11-0"
-localstatedir="/var/lib/apps/lxd/0.11-0"
-varrun="/var/lib/apps/lxd/0.11-0"
+distrosysconfdir="${SNAP_APP_DATA_PATH}"
+localstatedir="${SNAP_APP_DATA_PATH}"
+varrun="${SNAP_APP_DATA_PATH}"
 
 # These can be overridden in /etc/default/lxc
 #   or in /etc/default/lxc-net

@@ -1,6 +1,6 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=${SNAP_APP_PATH}/deps/:${SNAP_APP_PATH}/lxc/:${SNAP_APP_PATH}/cgmanager
-export PATH=${SNAP_APP_PATH}/deps/:$PATH
+export LD_LIBRARY_PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:${SNAP_APP_PATH}/bin/$(uname -m)/lxc/:${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager
+export PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:$PATH
 export LXD_DIR=${SNAP_APP_DATA_PATH}/lxd
 
 # Stop lxd
@@ -43,4 +43,4 @@ if [ -e ${SNAP_APP_DATA_PATH}/cgmanager.pid ]; then
 fi
 
 # Stop networking
-${SNAP_APP_PATH}/bin/lxc-net stop
+${SNAP_APP_PATH}/wrappers/lxc-net stop

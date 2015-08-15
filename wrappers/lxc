@@ -1,0 +1,5 @@
+#!/bin/sh
+export LD_LIBRARY_PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:${SNAP_APP_PATH}/bin/$(uname -m)/lxc/:${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager
+export PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:$PATH
+export LXD_DIR=${SNAP_APP_DATA_PATH}/lxd
+exec ${SNAP_APP_PATH}/bin/$(uname -m)/lxd/lxc $@

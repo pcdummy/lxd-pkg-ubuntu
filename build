@@ -1,25 +1,32 @@
 #!/bin/sh -eu
+## Build variables
+CGMANAGER_TAG="v0.38"
+LXCFS_TAG="lxcfs-0.9"
+LXC_TAG="lxc-1.1.3"
+LXD_TAG="lxd-0.15"
 
+## Build paths
+CGMANAGER_PATH="bin/$(uname -m)/cgmanager"
+LXCFS_PATH="bin/$(uname -m)/lxcfs"
+LXC_PATH="bin/$(uname -m)/lxc"
+LXD_PATH="bin/$(uname -m)/lxd"
+DEPS_PATH="bin/$(uname -m)/deps"
+
+## Install paths
 PKG_VERSION=$(cat meta/package.yaml  | grep version | sed "s/version: //g")
-PKG_PATH="/apps/lxd/$PKG_VERSION/"
+PKG_PATH="/apps/lxd/$PKG_VERSION/bin/$(uname -m)"
 PKG_DATA_PATH="/var/lib/apps/lxd/$PKG_VERSION/"
-
-#CGMANAGER_TAG="v0.37"
-#LXCFS_TAG="lxcfs-0.9"
-#LXC_TAG="lxc-1.1.2"
-#LXD_TAG="lxd-0.11"
-CGMANAGER_TAG="master"
-LXCFS_TAG="master"
-LXC_TAG="master"
-LXD_TAG="master"
-
 ARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+# Create the build area
 TEMP=$(mktemp -d)
-rm -Rf cgmanager lxcfs lxc lxd deps
-mkdir cgmanager lxcfs lxc lxd deps
-
-
 mkdir ${TEMP}/pkg
+
+# Create the target directories
+for dir in $CGMANAGER_PATH $LXCFS_PATH $LXC_PATH $LXD_PATH $DEPS_PATH; do
+    rm -Rf $dir
+    mkdir -p $dir
+done
 
 # Install dependencies
 apt-get install -y \
@@ -30,14 +37,15 @@ apt-get install -y \
     libpam0g-dev
 
 # Bundle some binaries and libraries
-cp /sbin/brctl deps/
-cp /usr/lib/$ARCH/libnetfilter_conntrack.so.3 deps/
-cp /usr/lib/$ARCH/libnettle.so.6 deps/
-cp /usr/lib/$ARCH/libhogweed.so.4 deps/
-cp /lib/$ARCH/libmnl.so.0 deps/
-cp /usr/sbin/dnsmasq deps/
-cp /usr/bin/rsync deps/
-cp /usr/bin/setfacl deps/
+cp /sbin/brctl $DEPS_PATH
+cp /usr/lib/$ARCH/libnetfilter_conntrack.so.3 $DEPS_PATH
+cp /usr/lib/$ARCH/libnettle.so.6 $DEPS_PATH
+cp /usr/lib/$ARCH/libhogweed.so.4 $DEPS_PATH
+cp /lib/$ARCH/libfuse.so.2.9.4 $DEPS_PATH/libfuse.so.2
+cp /lib/$ARCH/libmnl.so.0 $DEPS_PATH
+cp /usr/sbin/dnsmasq $DEPS_PATH
+cp /usr/bin/rsync $DEPS_PATH
+cp /usr/bin/setfacl $DEPS_PATH
 
 # CGManager
 (
@@ -49,9 +57,10 @@ git checkout ${CGMANAGER_TAG} -b snappy
 make
 )
 
-cp ${TEMP}/cgmanager/cgmanager cgmanager/
-cp ${TEMP}/cgmanager/cgm-release-agent cgmanager/
-cp ${TEMP}/cgmanager/.libs/libcgm*so* cgmanager/
+cp ${TEMP}/cgmanager/cgmanager $CGMANAGER_PATH
+cp ${TEMP}/cgmanager/cgproxy $CGMANAGER_PATH
+cp ${TEMP}/cgmanager/cgm-release-agent $CGMANAGER_PATH
+cp ${TEMP}/cgmanager/.libs/libcgm*so* $CGMANAGER_PATH
 
 # LXCFS
 (
@@ -66,9 +75,9 @@ make
 sed -i "s#lib/lxcfs#lxcfs/mount#g" share/lxc.mount.hook
 )
 
-cp ${TEMP}/lxcfs/share/00-lxcfs.conf lxcfs/
-cp ${TEMP}/lxcfs/share/lxc.mount.hook lxcfs/
-cp ${TEMP}/lxcfs/.libs/lxcfs lxcfs/
+cp ${TEMP}/lxcfs/share/00-lxcfs.conf $LXCFS_PATH
+cp ${TEMP}/lxcfs/share/lxc.mount.hook $LXCFS_PATH
+cp ${TEMP}/lxcfs/.libs/lxcfs $LXCFS_PATH
 
 # LXC
 (
@@ -83,25 +92,25 @@ PKG_CONFIG_PATH=${TEMP}/cgmanager/ \
     --disable-examples --disable-doc --disable-api-docs --disable-bash \
     --enable-cgmanager --enable-apparmor --enable-seccomp \
     --enable-capabilities --localstatedir=${PKG_DATA_PATH} --datarootdir=${PKG_PATH} \
-    --libexecdir=${PKG_PATH} --with-rootfs-path=${PKG_DATA_PATH}
+    --libexecdir=${PKG_PATH} --with-rootfs-path=${PKG_DATA_PATH}/lxc
 make
 )
 
-cp ${TEMP}/lxc/src/lxc/liblxc.so lxc/
-ln -s liblxc.so lxc/liblxc.so.1
-ln -s liblxc.so lxc/liblxc.so.1.1.0
-cp ${TEMP}/lxc/src/lxc/lxc-monitord lxc/
+cp ${TEMP}/lxc/src/lxc/liblxc.so $LXC_PATH
+ln -s liblxc.so $LXC_PATH/liblxc.so.1
+ln -s liblxc.so $LXC_PATH/liblxc.so.1.1.0
+cp ${TEMP}/lxc/src/lxc/lxc-monitord $LXC_PATH
 
-mkdir lxc/config lxc/config/common.conf.d
-cp ${TEMP}/lxc/config/templates/common.conf lxc/config/
-cp ${TEMP}/lxc/config/templates/common.seccomp lxc/config/
-cp ${TEMP}/lxc/config/templates/userns.conf lxc/config/
-cp ${TEMP}/lxc/config/templates/ubuntu.common.conf lxc/config/
-cp ${TEMP}/lxc/config/templates/ubuntu.userns.conf lxc/config/
-echo -e "\nlxc.aa_profile = unconfined" >> lxc/config/ubuntu.userns.conf
+mkdir $LXC_PATH/config $LXC_PATH/config/common.conf.d
+cp ${TEMP}/lxc/config/templates/common.conf $LXC_PATH/config/
+cp ${TEMP}/lxc/config/templates/common.seccomp $LXC_PATH/config/
+cp ${TEMP}/lxc/config/templates/userns.conf $LXC_PATH/config/
+cp ${TEMP}/lxc/config/templates/ubuntu.common.conf $LXC_PATH/config/
+cp ${TEMP}/lxc/config/templates/ubuntu.userns.conf $LXC_PATH/config/
+echo -e "\nlxc.aa_profile = unconfined" >> $LXC_PATH/config/ubuntu.userns.conf
 
-mkdir lxc/hooks
-cp ${TEMP}/lxc/hooks/clonehostname lxc/hooks/
+mkdir $LXC_PATH/hooks
+cp ${TEMP}/lxc/hooks/clonehostname $LXC_PATH/hooks/
 
 # LXD
 (
@@ -123,6 +132,7 @@ go install -v -x github.com/lxc/lxd/fuidshift
 go install -v -x github.com/lxc/lxd/lxc
 go install -v -x github.com/lxc/lxd/lxd
 )
-cp ${TEMP}/lxd/build/bin/* lxd/
+cp ${TEMP}/lxd/build/bin/* $LXD_PATH
+cp ${TEMP}/lxd/scripts/lxd-images $LXD_PATH
 
 rm -Rf ${TEMP}

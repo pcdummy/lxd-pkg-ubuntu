@@ -1,9 +1,9 @@
 name: lxd
-version: 0.14-git0
+version: 0.15-0
 vendor: "Stéphane Graber <stgraber@ubuntu.com>"
 icon: meta/lxd.png
 type: framework
-architecture: amd64
+architecture: [amd64, armhf]
 source: https://github.com/lxc
 ports:
   external:
@@ -13,13 +13,19 @@ ports:
 services:
  - name: lxd
    description: "The LXD container lightervisor"
-   start: bin/lxd.start
-   stop: bin/lxd.stop
+   start: wrappers/lxd.start
+   stop: wrappers/lxd.stop
    security-policy:
     apparmor: meta/lxd.apparmor
     seccomp: meta/lxd.seccomp
 binaries:
- - name: bin/lxc
+ - name: wrappers/lxc
    description: "LXD command line client"
+   caps:
+    - networking
+ - name: wrappers/lxd-images
+   description: "LXD image importer"
+   security-policy:
+    apparmor: meta/lxd.apparmor
    caps:
     - networking
