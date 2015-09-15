@@ -2,7 +2,8 @@
 export LD_LIBRARY_PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:${SNAP_APP_PATH}/bin/$(uname -m)/lxc/:${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager
 export PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:$PATH
 export LXD_DIR=${SNAP_APP_DATA_PATH}/lxd
-export LXC_TEMPLATE_CONFIG=${SNAP_APP_PATH}/bin/$(uname -m)/lxc/config/
+export LXD_LXC_TEMPLATE_CONFIG=${SNAP_APP_PATH}/bin/$(uname -m)/lxc/config/
+export LXD_SECURITY_APPARMOR=false
 
 # Start networking
 ${SNAP_APP_PATH}/wrappers/lxc-net start
@@ -22,8 +23,7 @@ echo $! > ${SNAP_APP_DATA_PATH}/lxcfs.pid
 # Start lxd
 mkdir -p ${SNAP_APP_DATA_PATH}/lxc
 mkdir -p ${SNAP_APP_DATA_PATH}/lxd
-${SNAP_APP_PATH}/bin/$(uname -m)/lxd/lxd --group sudo &
+${SNAP_APP_PATH}/bin/$(uname -m)/lxd/lxd --group sudo --logfile ${LXD_DIR}/logs/lxd.log &
 PID=$!
 echo $PID > ${SNAP_APP_DATA_PATH}/lxd.pid
-
 wait $PID
