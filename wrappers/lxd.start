@@ -22,7 +22,7 @@ echo $! > ${SNAP_APP_DATA_PATH}/lxcfs.pid
 
 # Start lxd
 mkdir -p ${SNAP_APP_DATA_PATH}/lxc
-mkdir -p ${SNAP_APP_DATA_PATH}/lxd
+mkdir -p ${SNAP_APP_DATA_PATH}/lxd ${SNAP_APP_DATA_PATH}/lxd/logs
 ${SNAP_APP_PATH}/bin/$(uname -m)/lxd/lxd --group sudo --logfile ${LXD_DIR}/logs/lxd.log &
 PID=$!
 echo $PID > ${SNAP_APP_DATA_PATH}/lxd.pid
