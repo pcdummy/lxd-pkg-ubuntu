@@ -72,9 +72,11 @@ PKG_CONFIG_PATH=${TEMP}/cgmanager/ ./configure \
     CFLAGS="-I${TEMP}" LDFLAGS="-L${TEMP}/cgmanager/.libs/" \
     --datarootdir=${PKG_PATH} --localstatedir=${PKG_DATA_PATH}
 make
-sed -i "s#lib/lxcfs#lxcfs/mount#g" share/lxc.mount.hook
+sed -i "s#lib/lxcfs#lxcfs#g" share/lxc.mount.hook
+sed -i "s#\${LXC_ROOTFS_MOUNT}${PKG_DATA_PATH}lxcfs/#\${LXC_ROOTFS_MOUNT}/var/lib/lxcfs/#" share/lxc.mount.hook
 )
 
+chmod +x ${TEMP}/lxcfs/share/lxc.mount.hook
 cp ${TEMP}/lxcfs/share/00-lxcfs.conf $LXCFS_PATH
 cp ${TEMP}/lxcfs/share/lxc.mount.hook $LXCFS_PATH
 cp ${TEMP}/lxcfs/.libs/lxcfs $LXCFS_PATH
@@ -108,6 +110,7 @@ cp ${TEMP}/lxc/config/templates/userns.conf $LXC_PATH/config/
 cp ${TEMP}/lxc/config/templates/ubuntu.common.conf $LXC_PATH/config/
 cp ${TEMP}/lxc/config/templates/ubuntu.userns.conf $LXC_PATH/config/
 echo -e "\nlxc.aa_profile = unconfined" >> $LXC_PATH/config/ubuntu.userns.conf
+ln -s ../../../lxcfs/00-lxcfs.conf $LXC_PATH/config/common.conf.d/
 
 mkdir $LXC_PATH/hooks
 cp ${TEMP}/lxc/hooks/clonehostname $LXC_PATH/hooks/
