@@ -3,7 +3,7 @@
 CGMANAGER_TAG="v0.39"
 LXCFS_TAG="lxcfs-0.10"
 LXC_TAG="lxc-1.1.3"
-LXD_TAG="lxd-0.18"
+LXD_TAG="lxd-0.19"
 
 ## Build paths
 CGMANAGER_PATH="bin/$(uname -m)/cgmanager"
