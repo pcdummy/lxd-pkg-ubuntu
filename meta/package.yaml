@@ -3,7 +3,7 @@ version: 0.19-1
 vendor: "Stéphane Graber <stgraber@ubuntu.com>"
 icon: meta/lxd.png
 type: framework
-architecture: [amd64, armhf]
+architectures: [amd64, armhf]
 source: https://github.com/lxc
 services:
  - name: lxd
