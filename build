@@ -33,7 +33,7 @@ apt-get install -y \
     bridge-utils dnsmasq-base acl rsync \
     git autoconf automake libtool libfuse-dev libapparmor-dev \
     libseccomp-dev libcap-dev libgnutls-dev nih-dbus-tool libnih-dbus-dev \
-    libpam0g-dev
+    libpam0g-dev libdbus-glib-1-dev libglib2.0-dev
 
 # Bundle some binaries and libraries
 cp /sbin/brctl $DEPS_PATH
