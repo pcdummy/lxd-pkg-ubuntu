@@ -1,12 +1,10 @@
 #!/bin/sh -eu
 ## Build variables
-CGMANAGER_TAG="v0.39"
 LXCFS_TAG="lxcfs-0.11"
 LXC_TAG="lxc-1.1.4"
 LXD_TAG="lxd-0.21"
 
 ## Build paths
-CGMANAGER_PATH="bin/$(uname -m)/cgmanager"
 LXCFS_PATH="bin/$(uname -m)/lxcfs"
 LXC_PATH="bin/$(uname -m)/lxc"
 LXD_PATH="bin/$(uname -m)/lxd"
@@ -22,7 +20,7 @@ TEMP=$(mktemp -d)
 mkdir ${TEMP}/pkg
 
 # Create the target directories
-for dir in $CGMANAGER_PATH $LXCFS_PATH $LXC_PATH $LXD_PATH $DEPS_PATH; do
+for dir in $LXCFS_PATH $LXC_PATH $LXD_PATH $DEPS_PATH; do
     rm -Rf $dir
     mkdir -p $dir
 done
@@ -46,29 +44,13 @@ cp /usr/sbin/dnsmasq $DEPS_PATH
 cp /usr/bin/rsync $DEPS_PATH
 cp /usr/bin/setfacl $DEPS_PATH
 
-# CGManager
-(
-git clone git://github.com/lxc/cgmanager ${TEMP}/cgmanager
-cd ${TEMP}/cgmanager
-git checkout ${CGMANAGER_TAG} -b snappy
-./bootstrap.sh
-./configure --sbindir=${PKG_PATH}/cgmanager/
-make
-)
-
-cp ${TEMP}/cgmanager/cgmanager $CGMANAGER_PATH
-cp ${TEMP}/cgmanager/cgproxy $CGMANAGER_PATH
-cp ${TEMP}/cgmanager/cgm-release-agent $CGMANAGER_PATH
-cp ${TEMP}/cgmanager/.libs/libcgm*so* $CGMANAGER_PATH
-
 # LXCFS
 (
 git clone git://github.com/lxc/lxcfs ${TEMP}/lxcfs
 cd ${TEMP}/lxcfs
 git checkout ${LXCFS_TAG} -b snappy
 ./bootstrap.sh
-PKG_CONFIG_PATH=${TEMP}/cgmanager/ ./configure \
-    CFLAGS="-I${TEMP}" LDFLAGS="-L${TEMP}/cgmanager/.libs/" \
+./configure \
     --datarootdir=${PKG_PATH} --localstatedir=${PKG_DATA_PATH}
 make
 sed -i "s#lib/lxcfs#lxcfs#g" share/lxc.mount.hook
@@ -88,12 +70,10 @@ git clone git://github.com/lxc/lxc ${TEMP}/lxc
 cd ${TEMP}/lxc
 git checkout ${LXC_TAG} -b snappy
 ./autogen.sh
-PKG_CONFIG_PATH=${TEMP}/cgmanager/ \
-    ./configure \
-    CFLAGS="-I${TEMP}" LDFLAGS="-L${TEMP}/cgmanager/.libs/ -Wl,-rpath,${TEMP}/cgmanager/.libs/" \
+./configure \
     --disable-selinux --disable-python --disable-lua --disable-tests \
     --disable-examples --disable-doc --disable-api-docs --disable-bash \
-    --enable-cgmanager --enable-apparmor --enable-seccomp \
+    --disable-cgmanager --enable-apparmor --enable-seccomp \
     --enable-capabilities --localstatedir=${PKG_DATA_PATH} --datarootdir=${PKG_PATH} \
     --libexecdir=${PKG_PATH} --with-rootfs-path=${PKG_DATA_PATH}/lxc
 make
@@ -137,6 +117,5 @@ go install -v -x github.com/lxc/lxd/lxc
 go install -v -x github.com/lxc/lxd/lxd
 )
 cp ${TEMP}/lxd/build/bin/* $LXD_PATH
-cp ${TEMP}/lxd/scripts/lxd-images $LXD_PATH
 
 rm -Rf ${TEMP}

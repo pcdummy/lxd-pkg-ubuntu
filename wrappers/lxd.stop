@@ -1,5 +1,5 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:${SNAP_APP_PATH}/bin/$(uname -m)/lxc/:${SNAP_APP_PATH}/bin/$(uname -m)/cgmanager
+export LD_LIBRARY_PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:${SNAP_APP_PATH}/bin/$(uname -m)/lxc/
 export PATH=${SNAP_APP_PATH}/bin/$(uname -m)/deps/:$PATH
 export LXD_DIR=${SNAP_APP_DATA_PATH}/lxd
 
@@ -19,19 +19,6 @@ fi
 # Stop lxcfs
 if [ -e ${SNAP_APP_DATA_PATH}/lxcfs.pid ]; then
     PID=$(cat ${SNAP_APP_DATA_PATH}/lxcfs.pid)
-    /bin/kill $PID
-    COUNT=0
-    while [ "$COUNT" != "30" ]; do
-        sleep 1
-        COUNT=$((${COUNT}+1))
-        ps $PID >/dev/null 2>&1 || break
-    done
-    ps $PID >/dev/null 2>&1 && /bin/kill -9 $PID
-fi
-
-# Stop cgmanager
-if [ -e ${SNAP_APP_DATA_PATH}/cgmanager.pid ]; then
-    PID=$(cat ${SNAP_APP_DATA_PATH}/cgmanager.pid)
     /bin/kill $PID
     COUNT=0
     while [ "$COUNT" != "30" ]; do

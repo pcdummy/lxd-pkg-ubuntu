@@ -1,5 +1,5 @@
 name: lxd
-version: 0.19-1
+version: 2.0.0.rc2-1
 vendor: "Stéphane Graber <stgraber@ubuntu.com>"
 icon: meta/lxd.png
 type: framework
@@ -23,8 +23,3 @@ binaries:
    description: "LXD command line client"
    caps:
     - networking
- - name: wrappers/lxd-images
-   description: "LXD image importer"
-   security-policy:
-    apparmor: meta/lxd.apparmor
-    seccomp: meta/lxd.seccomp
