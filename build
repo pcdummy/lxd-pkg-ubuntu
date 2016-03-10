@@ -60,9 +60,8 @@ sed -i "s#\${LXC_ROOTFS_MOUNT}${PKG_DATA_PATH}lxcfs/#\${LXC_ROOTFS_MOUNT}/var/li
 chmod +x ${TEMP}/lxcfs/share/lxc.mount.hook
 cp ${TEMP}/lxcfs/share/00-lxcfs.conf $LXCFS_PATH
 cp ${TEMP}/lxcfs/share/lxc.mount.hook $LXCFS_PATH
-[ -e "${TEMP}/lxcfs/lxcfs" ] && cp ${TEMP}/lxcfs/lxcfs $LXCFS_PATH
-[ -e "${TEMP}/lxcfs/lxcfs_mkdir" ] && cp ${TEMP}/lxcfs/lxcfs_mkdir $LXCFS_PATH
 [ -e "${TEMP}/lxcfs/.libs/lxcfs" ] && cp ${TEMP}/lxcfs/.libs/lxcfs $LXCFS_PATH
+[ -e "${TEMP}/lxcfs/.libs/liblxcfs.so" ] && cp $(readlink -f "${TEMP}/lxcfs/.libs/liblxcfs.so") $LXCFS_PATH/liblxcfs.so
 
 # LXC
 (
