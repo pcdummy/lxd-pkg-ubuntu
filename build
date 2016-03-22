@@ -53,13 +53,14 @@ git checkout ${LXCFS_TAG} -b snappy
 ./configure \
     --datarootdir=${PKG_PATH} --localstatedir=${PKG_DATA_PATH}
 make
-sed -i "s#lib/lxcfs#lxcfs#g" share/lxc.mount.hook
-sed -i "s#\${LXC_ROOTFS_MOUNT}${PKG_DATA_PATH}/lxcfs/#\${LXC_ROOTFS_MOUNT}/var/lib/lxcfs/#" share/lxc.mount.hook
+sed -i "s#lib/lxcfs#lxcfs#g" share/lxc.mount.hook share/lxd.reboot.hook
+sed -i "s#\${LXC_ROOTFS_MOUNT}${PKG_DATA_PATH}/lxcfs/#\${LXC_ROOTFS_MOUNT}/var/lib/lxcfs/#" share/lxc.mount.hook share/lxc.reboot.hook
 )
 
-chmod +x ${TEMP}/lxcfs/share/lxc.mount.hook
+chmod +x ${TEMP}/lxcfs/share/lxc.mount.hook ${TEMP}/lxcfs/share/lxc.reboot.hook
 cp ${TEMP}/lxcfs/share/00-lxcfs.conf $LXCFS_PATH
 cp ${TEMP}/lxcfs/share/lxc.mount.hook $LXCFS_PATH
+cp ${TEMP}/lxcfs/share/lxc.reboot.hook $LXCFS_PATH
 [ -e "${TEMP}/lxcfs/.libs/lxcfs" ] && cp ${TEMP}/lxcfs/.libs/lxcfs $LXCFS_PATH
 [ -e "${TEMP}/lxcfs/.libs/liblxcfs.so" ] && cp $(readlink -f "${TEMP}/lxcfs/.libs/liblxcfs.so") $LXCFS_PATH/liblxcfs.so
 
