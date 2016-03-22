@@ -12,7 +12,7 @@ DEPS_PATH="bin/$(uname -m)/deps"
 
 ## Install paths
 PKG_PATH="/apps/lxd/current/bin/$(uname -m)"
-PKG_DATA_PATH="/var/lib/apps/lxd/current/"
+PKG_DATA_PATH="/var/lib/apps/lxd/current"
 ARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 # Create the build area
@@ -54,7 +54,7 @@ git checkout ${LXCFS_TAG} -b snappy
     --datarootdir=${PKG_PATH} --localstatedir=${PKG_DATA_PATH}
 make
 sed -i "s#lib/lxcfs#lxcfs#g" share/lxc.mount.hook
-sed -i "s#\${LXC_ROOTFS_MOUNT}${PKG_DATA_PATH}lxcfs/#\${LXC_ROOTFS_MOUNT}/var/lib/lxcfs/#" share/lxc.mount.hook
+sed -i "s#\${LXC_ROOTFS_MOUNT}${PKG_DATA_PATH}/lxcfs/#\${LXC_ROOTFS_MOUNT}/var/lib/lxcfs/#" share/lxc.mount.hook
 )
 
 chmod +x ${TEMP}/lxcfs/share/lxc.mount.hook
