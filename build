@@ -108,6 +108,9 @@ export PKG_CONFIG_PATH=${TEMP}/lxc
 export CGO_CFLAGS="-I${TEMP}/lxc/src/"
 export CGO_LDFLAGS="-L${TEMP}/lxc/src/lxc/"
 
+# Patch lxcbr0 back in
+sed -i "s/lxdbr0/lxcbr0/g" -i lxd/db_profiles.go
+
 ln -s ${TEMP}/lxd ${TEMP}/lxd/build/src/github.com/lxc/lxd
 go get -v -x ./... || true
 go get -v -x ./... || true
