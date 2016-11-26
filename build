@@ -118,7 +118,7 @@ go get -v -x ./... || true
 go get -v -x ./... || true
 go install -v -x github.com/lxc/lxd/fuidshift
 go install -v -x github.com/lxc/lxd/lxc
-go install -v -x github.com/lxc/lxd/lxd
+go install -tags libsqlite3 -v -x github.com/lxc/lxd/lxd
 )
 cp ${TEMP}/lxd/build/bin/* $LXD_PATH
 
