@@ -79,7 +79,7 @@ git checkout ${LXC_TAG} -b snappy
 make
 )
 
-cp ${TEMP}/lxc/src/lxc/liblxc.so $LXC_PATH
+cp ${TEMP}/lxc/src/lxc/liblxc.so.1.0.0 $LXC_PATH/liblxc.so
 ln -s liblxc.so $LXC_PATH/liblxc.so.1
 ln -s liblxc.so $LXC_PATH/liblxc.so.1.1.0
 cp ${TEMP}/lxc/src/lxc/lxc-monitord $LXC_PATH
