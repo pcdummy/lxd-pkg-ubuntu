@@ -106,7 +106,7 @@ mkdir -p build build/src/github.com/lxc/
 export GOPATH=${TEMP}/lxd/build
 export PKG_CONFIG_PATH=${TEMP}/lxc
 export CGO_CFLAGS="-I${TEMP}/lxc/src/"
-export CGO_LDFLAGS="-L${TEMP}/lxc/src/lxc/"
+export CGO_LDFLAGS="-L${TEMP}/lxc/src/lxc/.libs/"
 
 # Patch lxcbr0 back in
 sed -i "s/lxdbr0/lxcbr0/g" -i lxd/db_profiles.go
