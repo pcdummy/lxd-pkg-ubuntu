@@ -31,13 +31,14 @@ apt-get install -y \
     bridge-utils dnsmasq-base acl rsync \
     git autoconf automake libtool libfuse-dev libapparmor-dev \
     libseccomp-dev libcap-dev libgnutls-dev nih-dbus-tool libnih-dbus-dev \
-    libpam0g-dev libdbus-glib-1-dev libglib2.0-dev
+    libpam0g-dev libdbus-glib-1-dev libglib2.0-dev libsqlite3-dev
 
 # Bundle some binaries and libraries
 cp /sbin/brctl $DEPS_PATH
 cp /usr/lib/$ARCH/libnetfilter_conntrack.so.3 $DEPS_PATH
 cp /usr/lib/$ARCH/libnettle.so.6 $DEPS_PATH
 cp /usr/lib/$ARCH/libhogweed.so.4 $DEPS_PATH
+cp /usr/lib/$ARCH/libsqlite3.so.0.8.6 $DEPS_PATH/libsqlite3.so.0
 cp /lib/$ARCH/libfuse.so.2.9.4 $DEPS_PATH/libfuse.so.2
 cp /lib/$ARCH/libmnl.so.0 $DEPS_PATH
 cp /usr/sbin/dnsmasq $DEPS_PATH
