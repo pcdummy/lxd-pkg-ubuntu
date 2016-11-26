@@ -62,8 +62,8 @@ chmod +x ${TEMP}/lxcfs/share/lxc.mount.hook ${TEMP}/lxcfs/share/lxc.reboot.hook
 cp ${TEMP}/lxcfs/share/00-lxcfs.conf $LXCFS_PATH
 cp ${TEMP}/lxcfs/share/lxc.mount.hook $LXCFS_PATH
 cp ${TEMP}/lxcfs/share/lxc.reboot.hook $LXCFS_PATH
-[ -e "${TEMP}/lxcfs/.libs/lxcfs" ] && cp ${TEMP}/lxcfs/.libs/lxcfs $LXCFS_PATH
-[ -e "${TEMP}/lxcfs/.libs/liblxcfs.so" ] && cp $(readlink -f "${TEMP}/lxcfs/.libs/liblxcfs.so") $LXCFS_PATH/liblxcfs.so
+cp ${TEMP}/lxcfs/lxcfs $LXCFS_PATH
+cp $(readlink -f "${TEMP}/lxcfs/.libs/liblxcfs.so") $LXCFS_PATH/liblxcfs.so
 
 # LXC
 (
